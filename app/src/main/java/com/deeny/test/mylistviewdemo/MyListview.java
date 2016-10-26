@@ -5,20 +5,28 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * Created by deeny on 2016/10/13.
  */
 public class MyListview extends ListView {
-    private View headView;
-    private ImageView imageView;
+    private View headView,footerView;
+    private View loadMoreView;
+    private TextView tv_loadMore;
+    private ImageView imageView,img_refresh;
     private int maxOverY;//下拉可拖动的最大高度，应该为图片的高度
     private int initHeight;//初始高度，用于回弹回去用
     private OnLoadListener onLoadListener;
     private int totalY;//滑动的总距离，用于判断是否应该刷新，只有滑动超出一定距离后才可以
     private int loadingHeight=100;//当totalY大于这个高度的时候才可以进行刷新数据
+    private Context context;
     public MyListview(Context context) {
         this(context,null);
     }
@@ -29,6 +37,7 @@ public class MyListview extends ListView {
 
     public MyListview(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
         loadingHeight = MyUtils.getWindowDis(context)[1]/4;
         Log.e("loading高度是：",loadingHeight+"");
     }
@@ -45,6 +54,7 @@ public class MyListview extends ListView {
     public void setHeadView(View headView) {
         this.headView = headView;//将view设置为指定的headview，然后add进去
         imageView = (ImageView) headView.findViewById(R.id.iv);
+        img_refresh = (ImageView) headView.findViewById(R.id.img_refresh);
         Log.e("listviewdemo",imageView.getHeight()+"");
         initHeight = imageView.getHeight();//将图片控件的初始高度设置为默认的初始值，用于回弹
         imageView.setDrawingCacheEnabled(true);
@@ -56,6 +66,8 @@ public class MyListview extends ListView {
         imageView.setDrawingCacheEnabled(false);
         //addHeaderView(headView);
     }
+
+
 
     /**
      * 用于内部子空间超出控件本身范围滑动的监听
@@ -90,6 +102,11 @@ public class MyListview extends ListView {
             case MotionEvent.ACTION_UP:
                 //在此应该加载数据，按照规范，在这应该提供一个接口暴露出来
                 if(onLoadListener != null && totalY > loadingHeight){//判断不为空，并且滑动距离大于20才执行加载数据
+                    img_refresh.setVisibility(VISIBLE);
+                    Animation animation = AnimationUtils.loadAnimation(context, R.anim.circle_anim);
+                    LinearInterpolator lin = new LinearInterpolator();
+                    animation.setInterpolator(lin);
+                    img_refresh.setAnimation(animation);
                     onLoadListener.onLoading();
                     totalY = 0;
                 }else{
@@ -102,10 +119,14 @@ public class MyListview extends ListView {
         return super.onTouchEvent(ev);
     }
 
+
+
     /**
      * 完成请求数据，刷新imageview高度
      */
     public void onComplete(){
+        img_refresh.clearAnimation();
+        img_refresh.setVisibility(GONE);
         //创建动画，目标高度为初始高度，目标控件为imageview
         MyAnimation myAnimation = new MyAnimation(initHeight,imageView);
         startAnimation(myAnimation);

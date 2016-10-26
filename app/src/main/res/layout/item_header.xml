@@ -4,11 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iv"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:src="@mipmap/img"
-        android:scaleType="centerCrop"/>
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:src="@mipmap/img"
+            android:scaleType="centerCrop"/>
+
+        <com.deeny.test.mylistviewdemo.CircleImageView
+            android:id="@+id/img_refresh"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@mipmap/regresh"
+            android:visibility="gone"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"/>
+
+    </RelativeLayout>
+
+
 
 </LinearLayout>

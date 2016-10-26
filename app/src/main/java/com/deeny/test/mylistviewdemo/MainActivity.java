@@ -1,14 +1,18 @@
 package com.deeny.test.mylistviewdemo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 
-public class MainActivity extends Activity {
+
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private MyListview listview;
     /**
@@ -23,8 +27,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         listview = (MyListview) findViewById(R.id.myListview);
         final View headView = LayoutInflater.from(this).inflate(R.layout.item_header,null);
+        final View footerView = LayoutInflater.from(this).inflate(R.layout.item_footer,null);
         listview.addHeaderView(headView);
         listview.setAdapter(new MyAdapter(MainActivity.this));
+        listview.setOnItemClickListener(this);
         //监听某个view所在的xml文件全部加载完成并且绘制了位置之后的监听
         headView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -42,6 +48,10 @@ public class MainActivity extends Activity {
                 handler.sendEmptyMessageDelayed(1,3000);
             }
         });
+
+
+
+
     }
 
     private Handler handler = new Handler(){
@@ -51,4 +61,9 @@ public class MainActivity extends Activity {
             listview.onComplete();//通知请求完成，刷新imageview
         }
     };
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
 }
